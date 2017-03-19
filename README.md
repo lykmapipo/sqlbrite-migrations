@@ -7,6 +7,8 @@ SQLBrite helper class to manage database creation and version management using a
 
 *Note!: Current all migrations must be placed on `migrations` folder inside `assets` folder*
 
+[Check Sample](https://github.com/lykmapipo/sqlbrite-migrations/tree/master/app)
+
 
 ## Installation
 Add [https://jitpack.io](https://jitpack.io) to your build.gradle with:
