@@ -10,6 +10,9 @@ SQLBrite helper class to manage database creation and version management using a
 [Check Sample](https://github.com/lykmapipo/sqlbrite-migrations/tree/master/app)
 
 
+![Screen Listing Seeded Data](https://raw.githubusercontent.com/lykmapipo/sqlbrite-migrations/master/screens/Screenshot_2017-03-19-20-38-41.png)
+
+
 ## Installation
 Add [https://jitpack.io](https://jitpack.io) to your build.gradle with:
 ```gradle
