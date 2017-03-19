@@ -175,6 +175,7 @@ public class SQLBriteOpenHelper extends SQLiteOpenHelper {
         //TODO implement down migrations
     }
 
+
     /**
      * Load and parse initial database migrations.
      * <p>

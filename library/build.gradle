@@ -26,9 +26,8 @@ dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
 
     //sqlbrite dependencies
+    compile "io.reactivex:rxandroid:${RXANDROID_VERSION}"
     compile "com.squareup.sqlbrite:sqlbrite:${SQLBRITE_VERSION}"
-    compile "io.reactivex.rxjava2:rxandroid:${RXANDROID_VERSION}"
-    compile "io.reactivex.rxjava2:rxjava:${RXJAVA_VERSION}"
 
     //yaml dependencies
     compile "com.github.bmoliveira:snake-yaml:${YAML_VERSION}"

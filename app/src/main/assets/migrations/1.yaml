@@ -1,0 +1,9 @@
+up:
+  - CREATE TABLE IF NOT EXISTS brites (_id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, name TEXT)
+seeds:
+  - INSERT INTO brites (name) values("Test Debug 1")
+  - INSERT INTO brites (name) values("Test Debug 2")
+  - INSERT INTO brites (name) values("Test Debug 3")
+  - INSERT INTO brites (name) values("Test Debug 4")
+down:
+  - DROP TABLE brites
