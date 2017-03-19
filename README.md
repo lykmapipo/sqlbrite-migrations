@@ -25,7 +25,13 @@ dependencies {
 }
 ```
 
-## Migration File Format
+## Migrations
+All migrations must be named after database version. So if you start a new project your first migration will be `1.yaml`.
+When upgrading to new version the the migration file must have the name corresponding to the new database version i.e
+if you upgrading from `version 1` to `version 2` then you migration script name will be `2.yaml`
+
+All migration have the below format:
+
 ```yaml
 up: # sql scripts to run during database upgrade or create
   - CREATE TABLE tests (name VARCHAR(45))
@@ -34,6 +40,14 @@ seeds: # sql scripts to be run during seeding
 down: # sql scripts to run during database downgrade
   - DROP TABLE tests
 ```
+
+Where:
+
+- `up` - List of SQL DDL to be applied to a database. Mainly for creating or altering a table.
+- `seeds` - List of SQL DML to be applied to a database. All DML will be applied after success `up DDL`.
+- `down` - List of DML and DDL to be applied to a database when downgrading. `Currently not implemented`.
+
+Whole of migration occur with a single database transaction. So up and seeding may happen or fail as whole.
 
 ## Contribute
 It will be nice, if you open an issue first so that we can know what is going on, then, fork this repo and push in your ideas. 
