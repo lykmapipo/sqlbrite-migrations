@@ -53,7 +53,6 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        database = SQLBriteOpenHelper.get(getApplicationContext(), "brite", 1);
         adapter = new BriteAdapter(getApplicationContext());
         listView = (ListView) findViewById(R.id.list);
         listView.setAdapter(adapter);
@@ -62,6 +61,9 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+
+        database = SQLBriteOpenHelper.get(getApplicationContext(), "brite", 1);
+
         subscription = database.createQuery("brites", "SELECT * FROM brites")
                 .mapToList(Brite.MAPPER)
                 .subscribeOn(Schedulers.io())

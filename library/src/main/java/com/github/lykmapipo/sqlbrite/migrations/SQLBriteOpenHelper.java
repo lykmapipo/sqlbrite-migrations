@@ -31,10 +31,10 @@ import java.util.Map;
  */
 public class SQLBriteOpenHelper extends SQLiteOpenHelper {
 
-    private static final String TAG = SQLBriteOpenHelper.class.getSimpleName();
     private String migrationDir = "migrations";
     private Context context;
     private boolean isOnTestMode = false;
+    private static BriteDatabase briteDatabase;
 
 
     /**
@@ -91,9 +91,11 @@ public class SQLBriteOpenHelper extends SQLiteOpenHelper {
      * @see BriteDatabase
      */
     public synchronized static BriteDatabase get(Context context, String name, int version) {
-        SQLBriteOpenHelper sqlBriteOpenHelper = new SQLBriteOpenHelper(context, name, null, version);
-        SqlBrite sqlBrite = new SqlBrite.Builder().build();
-        BriteDatabase briteDatabase = sqlBrite.wrapDatabaseHelper(sqlBriteOpenHelper, Schedulers.io());
+        if (briteDatabase == null) {
+            SQLBriteOpenHelper sqlBriteOpenHelper = new SQLBriteOpenHelper(context, name, null, version);
+            SqlBrite sqlBrite = new SqlBrite.Builder().build();
+            briteDatabase = sqlBrite.wrapDatabaseHelper(sqlBriteOpenHelper, Schedulers.io());
+        }
         return briteDatabase;
     }
 
@@ -109,9 +111,11 @@ public class SQLBriteOpenHelper extends SQLiteOpenHelper {
      */
     public synchronized static BriteDatabase get(Context context, String name,
                                                  SQLiteDatabase.CursorFactory factory, int version) {
-        SQLBriteOpenHelper sqlBriteOpenHelper = new SQLBriteOpenHelper(context, name, factory, version);
-        SqlBrite sqlBrite = new SqlBrite.Builder().build();
-        BriteDatabase briteDatabase = sqlBrite.wrapDatabaseHelper(sqlBriteOpenHelper, Schedulers.io());
+        if (briteDatabase == null) {
+            SQLBriteOpenHelper sqlBriteOpenHelper = new SQLBriteOpenHelper(context, name, factory, version);
+            SqlBrite sqlBrite = new SqlBrite.Builder().build();
+            briteDatabase = sqlBrite.wrapDatabaseHelper(sqlBriteOpenHelper, Schedulers.io());
+        }
         return briteDatabase;
     }
 
@@ -127,9 +131,11 @@ public class SQLBriteOpenHelper extends SQLiteOpenHelper {
      */
     public synchronized static BriteDatabase get(Context context, String name,
                                                  SQLiteDatabase.CursorFactory factory, int version, DatabaseErrorHandler errorHandler) {
-        SQLBriteOpenHelper sqlBriteOpenHelper = new SQLBriteOpenHelper(context, name, factory, version, errorHandler);
-        SqlBrite sqlBrite = new SqlBrite.Builder().build();
-        BriteDatabase briteDatabase = sqlBrite.wrapDatabaseHelper(sqlBriteOpenHelper, Schedulers.io());
+        if (briteDatabase == null) {
+            SQLBriteOpenHelper sqlBriteOpenHelper = new SQLBriteOpenHelper(context, name, factory, version, errorHandler);
+            SqlBrite sqlBrite = new SqlBrite.Builder().build();
+            briteDatabase = sqlBrite.wrapDatabaseHelper(sqlBriteOpenHelper, Schedulers.io());
+        }
         return briteDatabase;
     }
 
@@ -143,6 +149,7 @@ public class SQLBriteOpenHelper extends SQLiteOpenHelper {
      * @see BriteDatabase
      */
     public synchronized static BriteDatabase get(Context context, String name, int version, boolean testing) {
+        //always return new instance on test mode
         SQLBriteOpenHelper sqlBriteOpenHelper = new SQLBriteOpenHelper(context, name, version, testing);
         SqlBrite sqlBrite = new SqlBrite.Builder().build();
         BriteDatabase briteDatabase = sqlBrite.wrapDatabaseHelper(sqlBriteOpenHelper, Schedulers.immediate());
