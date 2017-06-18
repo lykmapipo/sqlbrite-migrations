@@ -35,7 +35,7 @@ public class SQLBriteMigrationTest {
 
     @Test
     public void shouldBeAbleToLoadAndParseDefaultMigrationsFromInputStream() throws IOException {
-        SQLBriteOpenHelper briteOpenHelper = new SQLBriteOpenHelper(context, "brite",1, true);
+        SQLBriteOpenHelper briteOpenHelper = new SQLBriteOpenHelper(context, "brite", 1, true);
         Map parsed = briteOpenHelper.parse();
 
         assertThat(parsed.get("up"), is(not(equalTo(null))));
@@ -45,8 +45,8 @@ public class SQLBriteMigrationTest {
 
     @Test
     public void shouldBeAbleToLoadAndParseSpecificMigrationsFromInputStream() throws IOException {
-        SQLBriteOpenHelper briteOpenHelper = new SQLBriteOpenHelper(context, "brite",1, true);
-        Map parsed = briteOpenHelper.parse(0);
+        SQLBriteOpenHelper briteOpenHelper = new SQLBriteOpenHelper(context, "brite", 1, true);
+        Map parsed = briteOpenHelper.parse(2);
 
         assertThat(parsed.get("up"), is(not(equalTo(null))));
         assertThat(parsed.get("down"), is(not(equalTo(null))));
@@ -55,13 +55,13 @@ public class SQLBriteMigrationTest {
 
     @Test
     public void shouldBeAbleToGetSQLBriteDatabase() {
-        BriteDatabase database = SQLBriteOpenHelper.get(context, "brite",1, true);
+        BriteDatabase database = SQLBriteOpenHelper.get(context, "brite", 1, true);
         assertThat(database, is(notNullValue()));
     }
 
     @Test
     public void shouldBeAbleToCreateAndSeedInitialDatabase() {
-        BriteDatabase database = SQLBriteOpenHelper.get(context, "brite",1, true);
+        BriteDatabase database = SQLBriteOpenHelper.get(context, "brite", 1, true);
         TestSubscriber<Brite> subscriber = new TestSubscriber<>();
 
         database.createQuery("brites", " SELECT * FROM brites LIMIT 1")
@@ -75,8 +75,8 @@ public class SQLBriteMigrationTest {
 
     @Test
     public void shouldBeAbleToUpgradeAndSeedDatabase() {
-        BriteDatabase database1 = SQLBriteOpenHelper.get(context, "brite",1, true);
-        BriteDatabase database2 = SQLBriteOpenHelper.get(context, "brite",2, true);
+        BriteDatabase database1 = SQLBriteOpenHelper.get(context, "brite", 1, true);
+        BriteDatabase database2 = SQLBriteOpenHelper.get(context, "brite", 2, true);
 
         TestSubscriber<Brite> subscriber1 = new TestSubscriber<>();
 

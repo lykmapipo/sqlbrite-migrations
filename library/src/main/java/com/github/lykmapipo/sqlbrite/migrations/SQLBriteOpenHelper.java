@@ -168,6 +168,7 @@ public class SQLBriteOpenHelper extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+        //TODO support version range from oldVersion to newVersion
         try {
             Map<String, List<String>> parsed = parse(newVersion);
             up(db, parsed);
@@ -180,6 +181,7 @@ public class SQLBriteOpenHelper extends SQLiteOpenHelper {
     public void onDowngrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         super.onDowngrade(db, oldVersion, newVersion);
         //TODO implement down migrations
+        //TODO obtain version ranges
     }
 
 
@@ -259,6 +261,26 @@ public class SQLBriteOpenHelper extends SQLiteOpenHelper {
                 }
             }
 
+            database.setTransactionSuccessful();
+        } finally {
+            database.endTransaction();
+        }
+    }
+
+    /**
+     * Apply up migration scripts and seed database with provided seeds
+     *
+     * @param database
+     * @param scripts
+     */
+    private void up(SQLiteDatabase database, List<Map<String, List<String>>> scripts) {
+        //ensure we apply or fail as whole
+        database.beginTransaction();
+        try {
+            //start apply all migrations
+            for (Map<String, List<String>> script : scripts) {
+                up(database, script);
+            }
             database.setTransactionSuccessful();
         } finally {
             database.endTransaction();

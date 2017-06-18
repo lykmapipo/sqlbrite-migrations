@@ -22,20 +22,30 @@ android {
 }
 
 
+ext{
+    rxAndroidVersion = '1.2.1'
+    sqlbriteVersion = '1.1.1'
+    yamlVersion = 'v1.18-android'
+    junitVersion = '4.12'
+    mockitoVersion = '1.9.5'
+    robolectricVersion = '3.1.2'
+}
+
+
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
 
     //sqlbrite dependencies
-    compile "io.reactivex:rxandroid:${RXANDROID_VERSION}"
-    compile "com.squareup.sqlbrite:sqlbrite:${SQLBRITE_VERSION}"
+    compile "io.reactivex:rxandroid:${rxAndroidVersion}"
+    compile "com.squareup.sqlbrite:sqlbrite:${sqlbriteVersion}"
 
     //yaml dependencies
-    compile "com.github.bmoliveira:snake-yaml:${YAML_VERSION}"
+    compile "com.github.bmoliveira:snake-yaml:${yamlVersion}"
 
     //test dependencies
-    testCompile "junit:junit:${JUNIT_VERSION}"
-    testCompile "org.mockito:mockito-core:${MOCKITO_VERSION}"
-    testCompile "org.robolectric:robolectric:${ROBOLECTRIC_VERSION}"
+    testCompile "junit:junit:${junitVersion}"
+    testCompile "org.mockito:mockito-core:${mockitoVersion}"
+    testCompile "org.robolectric:robolectric:${robolectricVersion}"
 }
 
 // build a jar with source files
