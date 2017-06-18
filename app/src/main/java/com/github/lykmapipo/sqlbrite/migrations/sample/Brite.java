@@ -1,15 +1,16 @@
 package com.github.lykmapipo.sqlbrite.migrations.sample;
 
 import android.database.Cursor;
-import rx.functions.Func1;
+import io.reactivex.functions.Function;
 
 /**
  * Created by lally on 3/18/17.
  */
 public class Brite {
 
-    static final Func1<Cursor, Brite> MAPPER = new Func1<Cursor, Brite>() {
-        @Override public Brite call(Cursor cursor) {
+    static final Function<Cursor, Brite> MAPPER = new Function<Cursor, Brite>() {
+        @Override
+        public Brite apply(Cursor cursor) {
             return new Brite(
                     cursor.getLong(cursor.getColumnIndexOrThrow("_id")),
                     cursor.getString(cursor.getColumnIndexOrThrow("name"))

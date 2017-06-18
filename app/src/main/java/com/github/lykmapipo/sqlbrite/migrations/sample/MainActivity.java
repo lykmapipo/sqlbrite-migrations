@@ -4,16 +4,16 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.ListView;
 import com.github.lykmapipo.sqlbrite.migrations.SQLBriteOpenHelper;
-import com.squareup.sqlbrite.BriteDatabase;
-import rx.Subscription;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.schedulers.Schedulers;
+import com.squareup.sqlbrite2.BriteDatabase;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.schedulers.Schedulers;
 
 public class MainActivity extends AppCompatActivity {
 
     private BriteDatabase database;
     private BriteAdapter adapter;
-    private Subscription subscription;
+    private Disposable disposable;
     private ListView listView;
 
 
@@ -32,16 +32,17 @@ public class MainActivity extends AppCompatActivity {
 
         database = SQLBriteOpenHelper.get(getApplicationContext(), "brite", 1);
 
-        subscription = database.createQuery("brites", "SELECT * FROM brites")
+        disposable = database.createQuery("brites", "SELECT * FROM brites")
                 .mapToList(Brite.MAPPER)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(adapter);
+
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        subscription.unsubscribe();
+        disposable.dispose();
     }
 }

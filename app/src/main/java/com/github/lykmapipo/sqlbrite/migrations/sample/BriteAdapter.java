@@ -6,7 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
-import rx.functions.Action1;
+import io.reactivex.functions.Consumer;
 
 import java.util.Collections;
 import java.util.List;
@@ -14,7 +14,7 @@ import java.util.List;
 /**
  * Created by lally on 3/19/17.
  */
-public class BriteAdapter extends BaseAdapter implements Action1<List<Brite>>{
+public class BriteAdapter extends BaseAdapter implements Consumer<List<Brite>> {
     private final LayoutInflater inflater;
 
     private List<Brite> items = Collections.emptyList();
@@ -24,7 +24,7 @@ public class BriteAdapter extends BaseAdapter implements Action1<List<Brite>>{
     }
 
     @Override
-    public void call(List<Brite> items) {
+    public void accept(List<Brite> items) {
         this.items = items;
         notifyDataSetChanged();
     }
