@@ -4,4 +4,5 @@ seeds:
   - INSERT INTO brites (name) values("Test Debug 2.1")
   - INSERT INTO brites (name) values("Test Debug 2.2")
 down:
-  - DROP TABLE brites
+  - DELETE FROM brites WHERE name = "Test Debug 2.1"
+  - DELETE FROM brites WHERE name = "Test Debug 2.2"

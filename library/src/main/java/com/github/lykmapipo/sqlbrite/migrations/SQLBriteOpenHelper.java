@@ -12,6 +12,7 @@ import rx.schedulers.Schedulers;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -33,6 +34,7 @@ public class SQLBriteOpenHelper extends SQLiteOpenHelper {
 
     private String migrationDir = "migrations";
     private Context context;
+    private int version = 1; //current database version to support seed up to requested database version
     private boolean isOnTestMode = false;
     private static BriteDatabase briteDatabase;
 
@@ -47,6 +49,7 @@ public class SQLBriteOpenHelper extends SQLiteOpenHelper {
      */
     public SQLBriteOpenHelper(Context context, String name, SQLiteDatabase.CursorFactory factory, int version) {
         super(context, name, factory, version);
+        this.version = version;
         this.context = context;
     }
 
@@ -62,6 +65,7 @@ public class SQLBriteOpenHelper extends SQLiteOpenHelper {
     public SQLBriteOpenHelper(Context context, String name, SQLiteDatabase.CursorFactory factory,
                               int version, DatabaseErrorHandler errorHandler) {
         super(context, name, factory, version, errorHandler);
+        this.version = version;
         this.context = context;
     }
 
@@ -77,6 +81,7 @@ public class SQLBriteOpenHelper extends SQLiteOpenHelper {
     public SQLBriteOpenHelper(Context context, String name, int version, boolean testing) {
         super(context, name, null, version);
         this.context = context;
+        this.version = version;
         this.isOnTestMode = testing;
     }
 
@@ -130,7 +135,8 @@ public class SQLBriteOpenHelper extends SQLiteOpenHelper {
      * @see BriteDatabase
      */
     public synchronized static BriteDatabase get(Context context, String name,
-                                                 SQLiteDatabase.CursorFactory factory, int version, DatabaseErrorHandler errorHandler) {
+                                                 SQLiteDatabase.CursorFactory factory, int version,
+                                                 DatabaseErrorHandler errorHandler) {
         if (briteDatabase == null) {
             SQLBriteOpenHelper sqlBriteOpenHelper = new SQLBriteOpenHelper(context, name, factory, version, errorHandler);
             SqlBrite sqlBrite = new SqlBrite.Builder().build();
@@ -159,29 +165,85 @@ public class SQLBriteOpenHelper extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
         try {
-            Map<String, List<String>> parsed = parse();
+            //run all migrations from begin to current requested database version
+            int version = db.getVersion();
+            version = version > this.version ? version : this.version; //ensure we start at requested database version
+            List<Map<String, List<String>>> parsed = parse(0, version, true);
             up(db, parsed);
         } catch (IOException e) {
             Log.e("Database Error:", e.getMessage());
         }
     }
 
+    /**
+     * Upgrade database to latest new version
+     *
+     * @param db
+     * @param oldVersion
+     * @param newVersion
+     */
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        //TODO support version range from oldVersion to newVersion
         try {
-            Map<String, List<String>> parsed = parse(newVersion);
+            //load all migrations from old version to current version
+            List<Map<String, List<String>>> parsed = parse(oldVersion, newVersion, true);
+
+            //upgrade database
             up(db, parsed);
         } catch (IOException e) {
             Log.e("Database Error:", e.getMessage());
         }
     }
 
+    /**
+     * Downgrade database to previous old version
+     *
+     * @param db
+     * @param oldVersion
+     * @param newVersion
+     */
     @Override
     public void onDowngrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        super.onDowngrade(db, oldVersion, newVersion);
-        //TODO implement down migrations
-        //TODO obtain version ranges
+        try {
+            //load all migrations from old version to current version
+            List<Map<String, List<String>>> parsed = parse(oldVersion, newVersion, false);
+
+            //upgrade database
+            down(db, parsed);
+        } catch (IOException e) {
+            Log.e("Database Error:", e.getMessage());
+        }
+    }
+
+
+    /**
+     * Load and parse all required database migrations.
+     *
+     * @return
+     * @throws IOException
+     */
+    public synchronized List<Map<String, List<String>>> parse(int oldVersion, int newVersion, boolean up) throws IOException {
+
+        //collect all require migrations
+        List<Map<String, List<String>>> scripts = new ArrayList<Map<String, List<String>>>();
+
+        //iterate over all required migrations
+        if (up) {
+            //parse up migrations
+            int startVersion = oldVersion + 1;
+            for (int i = startVersion; i <= newVersion; i++) {
+                Map<String, List<String>> script = this.parse(i);
+                scripts.add(script);
+            }
+        } else {
+            //parse down migrations
+            for (int i = oldVersion; i > newVersion; i--) {
+                Map<String, List<String>> script = this.parse(i);
+                scripts.add(script);
+            }
+        }
+
+        return scripts;
     }
 
 
@@ -238,7 +300,7 @@ public class SQLBriteOpenHelper extends SQLiteOpenHelper {
      * @param database
      * @param scripts
      */
-    private void up(SQLiteDatabase database, Map<String, List<String>> scripts) {
+    private synchronized void up(SQLiteDatabase database, Map<String, List<String>> scripts) {
         database.beginTransaction();
         try {
             //obtain up migrations
@@ -273,13 +335,59 @@ public class SQLBriteOpenHelper extends SQLiteOpenHelper {
      * @param database
      * @param scripts
      */
-    private void up(SQLiteDatabase database, List<Map<String, List<String>>> scripts) {
+    private synchronized void up(SQLiteDatabase database, List<Map<String, List<String>>> scripts) {
         //ensure we apply or fail as whole
         database.beginTransaction();
         try {
             //start apply all migrations
             for (Map<String, List<String>> script : scripts) {
                 up(database, script);
+            }
+            database.setTransactionSuccessful();
+        } finally {
+            database.endTransaction();
+        }
+    }
+
+
+    /**
+     * Apply down migration scripts
+     *
+     * @param database
+     * @param scripts
+     */
+    private synchronized void down(SQLiteDatabase database, Map<String, List<String>> scripts) {
+        database.beginTransaction();
+        try {
+            //obtain down migrations
+            List<String> downs = scripts.get("down");
+
+            //apply down migrations
+            if (downs != null) {
+                for (String script : downs) {
+                    database.execSQL(script);
+                }
+            }
+
+            database.setTransactionSuccessful();
+        } finally {
+            database.endTransaction();
+        }
+    }
+
+    /**
+     * Apply down migration scripts
+     *
+     * @param database
+     * @param scripts
+     */
+    private synchronized void down(SQLiteDatabase database, List<Map<String, List<String>>> scripts) {
+        //ensure we apply or fail as whole
+        database.beginTransaction();
+        try {
+            //start apply all migrations
+            for (Map<String, List<String>> script : scripts) {
+                down(database, script);
             }
             database.setTransactionSuccessful();
         } finally {
