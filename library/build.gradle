@@ -5,14 +5,14 @@ group = 'com.github.lykmapipo'
 
 android {
     compileSdkVersion 25
-    
+
     buildToolsVersion "25.0.2"
 
     defaultConfig {
         minSdkVersion 11
         targetSdkVersion 25
-        versionCode 10
-        versionName "0.1.0"
+        versionCode 100
+        versionName "1.0.0"
         consumerProguardFiles 'proguard-rules.pro'
     }
 
@@ -22,9 +22,10 @@ android {
 }
 
 
-ext{
-    rxAndroidVersion = '1.2.1'
-    sqlbriteVersion = '1.1.1'
+ext {
+    rxAndroidVersion = '2.0.1'
+    rxJavaVersion = '2.0.1'
+    sqlbriteVersion = '2.0.0-SNAPSHOT'
     yamlVersion = 'v1.18-android'
     junitVersion = '4.12'
     mockitoVersion = '1.9.5'
@@ -36,8 +37,9 @@ dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
 
     //sqlbrite dependencies
-    compile "io.reactivex:rxandroid:${rxAndroidVersion}"
-    compile "com.squareup.sqlbrite:sqlbrite:${sqlbriteVersion}"
+    compile "io.reactivex.rxjava2:rxjava:${rxJavaVersion}"
+    compile "io.reactivex.rxjava2:rxandroid:${rxAndroidVersion}"
+    compile "com.squareup.sqlbrite2:sqlbrite:${sqlbriteVersion}"
 
     //yaml dependencies
     compile "com.github.bmoliveira:snake-yaml:${yamlVersion}"

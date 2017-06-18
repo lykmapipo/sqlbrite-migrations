@@ -5,10 +5,10 @@ import android.database.DatabaseErrorHandler;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
-import com.squareup.sqlbrite.BriteDatabase;
-import com.squareup.sqlbrite.SqlBrite;
+import com.squareup.sqlbrite2.BriteDatabase;
+import com.squareup.sqlbrite2.SqlBrite;
+import io.reactivex.schedulers.Schedulers;
 import org.yaml.snakeyaml.Yaml;
-import rx.schedulers.Schedulers;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -158,7 +158,7 @@ public class SQLBriteOpenHelper extends SQLiteOpenHelper {
         //always return new instance on test mode
         SQLBriteOpenHelper sqlBriteOpenHelper = new SQLBriteOpenHelper(context, name, version, testing);
         SqlBrite sqlBrite = new SqlBrite.Builder().build();
-        BriteDatabase briteDatabase = sqlBrite.wrapDatabaseHelper(sqlBriteOpenHelper, Schedulers.immediate());
+        BriteDatabase briteDatabase = sqlBrite.wrapDatabaseHelper(sqlBriteOpenHelper, Schedulers.trampoline());
         return briteDatabase;
     }
 

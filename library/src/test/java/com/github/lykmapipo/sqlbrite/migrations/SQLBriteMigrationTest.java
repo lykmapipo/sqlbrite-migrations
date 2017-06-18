@@ -1,15 +1,15 @@
 package com.github.lykmapipo.sqlbrite.migrations;
 
 import android.content.Context;
-import com.squareup.sqlbrite.BriteDatabase;
-import com.squareup.sqlbrite.SqlBrite;
+import com.squareup.sqlbrite2.BriteDatabase;
+import com.squareup.sqlbrite2.SqlBrite;
+import io.reactivex.observers.TestObserver;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
 import org.robolectric.shadows.ShadowApplication;
-import rx.observers.TestSubscriber;
 
 import java.io.IOException;
 import java.util.List;
@@ -81,30 +81,30 @@ public class SQLBriteMigrationTest {
     @Test
     public void shouldBeAbleToCreateAndSeedInitialDatabase() {
         BriteDatabase database = SQLBriteOpenHelper.get(context, "brite", 1, true);
-        TestSubscriber<Brite> subscriber = new TestSubscriber<>();
+        TestObserver<Brite> observer = new TestObserver<>();
 
         database.createQuery("brites", " SELECT * FROM brites LIMIT 1")
                 .lift(SqlBrite.Query.mapToOne(Brite.MAPPER))
-                .subscribe(subscriber);
+                .subscribe(observer);
 
         //asserts
-        subscriber.assertNoErrors();
-        subscriber.assertValueCount(1);
+        observer.assertNoErrors();
+        observer.assertValueCount(1);
     }
 
     @Test
     public void shouldBeAbleToCreateAndSeedInitialDatabaseV2() {
         BriteDatabase database = SQLBriteOpenHelper.get(context, "brite", 3, true);
-        TestSubscriber<Brite> subscriber = new TestSubscriber<>();
+        TestObserver<Brite> observer = new TestObserver<>();
 
         database.createQuery("brites", " SELECT * FROM brites WHERE name = 'Test Debug 3.2'")
                 .lift(SqlBrite.Query.mapToOne(Brite.MAPPER))
-                .subscribe(subscriber);
+                .subscribe(observer);
 
         //asserts
-        subscriber.assertNoErrors();
-        subscriber.assertValueCount(1);
-        subscriber.assertValue(new Brite("Test Debug 3.2"));
+        observer.assertNoErrors();
+        observer.assertValueCount(1);
+        observer.assertValue(new Brite("Test Debug 3.2"));
     }
 
     @Test
@@ -112,25 +112,25 @@ public class SQLBriteMigrationTest {
         BriteDatabase database1 = SQLBriteOpenHelper.get(context, "brite", 1, true);
         BriteDatabase database2 = SQLBriteOpenHelper.get(context, "brite", 2, true);
 
-        TestSubscriber<Brite> subscriber1 = new TestSubscriber<>();
+        TestObserver<Brite> observer1 = new TestObserver<>();
 
         database1.createQuery("brites", " SELECT * FROM brites LIMIT 1")
                 .lift(SqlBrite.Query.mapToOne(Brite.MAPPER))
-                .subscribe(subscriber1);
+                .subscribe(observer1);
 
         //asserts
-        subscriber1.assertNoErrors();
-        subscriber1.assertValueCount(1);
+        observer1.assertNoErrors();
+        observer1.assertValueCount(1);
 
-        TestSubscriber<Brite> subscriber2 = new TestSubscriber<>();
+        TestObserver<Brite> observer2 = new TestObserver<>();
 
         database2.createQuery("brites", " SELECT * FROM brites WHERE name = 'Test Debug 2.2'")
                 .lift(SqlBrite.Query.mapToOne(Brite.MAPPER))
-                .subscribe(subscriber2);
+                .subscribe(observer2);
 
         //asserts
-        subscriber2.assertNoErrors();
-        subscriber2.assertValueCount(1);
+        observer2.assertNoErrors();
+        observer2.assertValueCount(1);
     }
 
     @Test
@@ -138,25 +138,25 @@ public class SQLBriteMigrationTest {
         BriteDatabase database1 = SQLBriteOpenHelper.get(context, "brite", 1, true);
         BriteDatabase database2 = SQLBriteOpenHelper.get(context, "brite", 3, true);
 
-        TestSubscriber<Brite> subscriber1 = new TestSubscriber<>();
+        TestObserver<Brite> observer1 = new TestObserver<>();
 
         database1.createQuery("brites", " SELECT * FROM brites LIMIT 1")
                 .lift(SqlBrite.Query.mapToOne(Brite.MAPPER))
-                .subscribe(subscriber1);
+                .subscribe(observer1);
 
         //asserts
-        subscriber1.assertNoErrors();
-        subscriber1.assertValueCount(1);
+        observer1.assertNoErrors();
+        observer1.assertValueCount(1);
 
-        TestSubscriber<Brite> subscriber2 = new TestSubscriber<>();
+        TestObserver<Brite> observer2 = new TestObserver<>();
 
         database2.createQuery("brites", " SELECT * FROM brites WHERE name = 'Test Debug 3.2'")
                 .lift(SqlBrite.Query.mapToOne(Brite.MAPPER))
-                .subscribe(subscriber2);
+                .subscribe(observer2);
 
         //asserts
-        subscriber2.assertNoErrors();
-        subscriber2.assertValueCount(1);
+        observer2.assertNoErrors();
+        observer2.assertValueCount(1);
     }
 
     @Test
@@ -164,38 +164,38 @@ public class SQLBriteMigrationTest {
         BriteDatabase database1 = SQLBriteOpenHelper.get(context, "brite", 1, true);
         BriteDatabase database2 = SQLBriteOpenHelper.get(context, "brite", 2, true);
 
-        TestSubscriber<Brite> subscriber1 = new TestSubscriber<>();
+        TestObserver<Brite> observer1 = new TestObserver<>();
 
         database1.createQuery("brites", " SELECT * FROM brites LIMIT 1")
                 .lift(SqlBrite.Query.mapToOne(Brite.MAPPER))
-                .subscribe(subscriber1);
+                .subscribe(observer1);
 
         //asserts
-        subscriber1.assertNoErrors();
-        subscriber1.assertValueCount(1);
+        observer1.assertNoErrors();
+        observer1.assertValueCount(1);
 
-        TestSubscriber<Brite> subscriber2 = new TestSubscriber<>();
+        TestObserver<Brite> observer2 = new TestObserver<>();
 
         database2.createQuery("brites", " SELECT * FROM brites WHERE name = 'Test Debug 2.2'")
                 .lift(SqlBrite.Query.mapToOne(Brite.MAPPER))
-                .subscribe(subscriber2);
+                .subscribe(observer2);
 
         //asserts
-        subscriber2.assertNoErrors();
-        subscriber2.assertValueCount(1);
+        observer2.assertNoErrors();
+        observer2.assertValueCount(1);
 
         //downgrade
         BriteDatabase database3 = SQLBriteOpenHelper.get(context, "brite", 1, true);
 
-        TestSubscriber<Brite> subscriber3 = new TestSubscriber<>();
+        TestObserver<Brite> observer3 = new TestObserver<>();
 
         database3.createQuery("brites", " SELECT * FROM brites WHERE name = 'Test Debug 2.2'")
                 .lift(SqlBrite.Query.mapToOne(Brite.MAPPER))
-                .subscribe(subscriber3);
+                .subscribe(observer3);
 
         //asserts
-        subscriber3.assertNoErrors();
-        subscriber3.assertValueCount(0);
+        observer3.assertNoErrors();
+        observer3.assertValueCount(0);
 
     }
 
@@ -204,38 +204,38 @@ public class SQLBriteMigrationTest {
         BriteDatabase database1 = SQLBriteOpenHelper.get(context, "brite", 1, true);
         BriteDatabase database2 = SQLBriteOpenHelper.get(context, "brite", 3, true);
 
-        TestSubscriber<Brite> subscriber1 = new TestSubscriber<>();
+        TestObserver<Brite> observer1 = new TestObserver<>();
 
         database1.createQuery("brites", " SELECT * FROM brites LIMIT 1")
                 .lift(SqlBrite.Query.mapToOne(Brite.MAPPER))
-                .subscribe(subscriber1);
+                .subscribe(observer1);
 
         //asserts
-        subscriber1.assertNoErrors();
-        subscriber1.assertValueCount(1);
+        observer1.assertNoErrors();
+        observer1.assertValueCount(1);
 
-        TestSubscriber<Brite> subscriber2 = new TestSubscriber<>();
+        TestObserver<Brite> observer2 = new TestObserver<>();
 
         database2.createQuery("brites", " SELECT * FROM brites WHERE name = 'Test Debug 2.2'")
                 .lift(SqlBrite.Query.mapToOne(Brite.MAPPER))
-                .subscribe(subscriber2);
+                .subscribe(observer2);
 
         //asserts
-        subscriber2.assertNoErrors();
-        subscriber2.assertValueCount(1);
+        observer2.assertNoErrors();
+        observer2.assertValueCount(1);
 
         //downgrade
         BriteDatabase database3 = SQLBriteOpenHelper.get(context, "brite", 1, true);
 
-        TestSubscriber<Brite> subscriber3 = new TestSubscriber<>();
+        TestObserver<Brite> observer3 = new TestObserver<>();
 
         database3.createQuery("brites", " SELECT * FROM brites WHERE name = 'Test Debug 2.2'")
                 .lift(SqlBrite.Query.mapToOne(Brite.MAPPER))
-                .subscribe(subscriber3);
+                .subscribe(observer3);
 
         //asserts
-        subscriber3.assertNoErrors();
-        subscriber3.assertValueCount(0);
+        observer3.assertNoErrors();
+        observer3.assertValueCount(0);
 
     }
 }

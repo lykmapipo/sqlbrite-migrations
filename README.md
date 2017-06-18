@@ -26,7 +26,7 @@ add `sqlbite-migrations` dependency into your project
 
 ```gradle
 dependencies {
-    compile 'com.github.lykmapipo:sqlbrite-migrations:v0.1.0'
+    compile 'com.github.lykmapipo:sqlbrite-migrations:v0.2.0'
 }
 ```
 
@@ -63,6 +63,8 @@ public class MainActivity extends AppCompatActivity {
         super.onResume();
 
         database = SQLBriteOpenHelper.get(getApplicationContext(), "brite", 1);
+//        database = SQLBriteOpenHelper.get(getApplicationContext(), "brite", <latest version>); //will upgrade to latest
+//        database = SQLBriteOpenHelper.get(getApplicationContext(), "brite", <previous version>); will downgrade
 
         subscription = database.createQuery("brites", "SELECT * FROM brites")
                 .mapToList(Brite.MAPPER)
@@ -99,7 +101,7 @@ Where:
 
 - `up` - List of SQL DDL to be applied to a database. Mainly for creating or altering a table.
 - `seeds` - List of SQL DML to be applied to a database. All DML will be applied after success `up DDL`.
-- `down` - List of DML and DDL to be applied to a database when downgrading. `Currently not implemented`.
+- `down` - List of DML and DDL to be applied to a database when downgrading.
 
 Whole of migration occur with a single database transaction. So up and seeding may happen or fail as whole.
 
