@@ -26,7 +26,7 @@ add `sqlbite-migrations` dependency into your project
 
 ```gradle
 dependencies {
-    compile 'com.github.lykmapipo:sqlbrite-migrations:v0.2.0'
+    compile 'com.github.lykmapipo:sqlbrite-migrations:v1.0.0'
 }
 ```
 
