@@ -11,8 +11,8 @@ android {
     defaultConfig {
         minSdkVersion 11
         targetSdkVersion 25
-        versionCode 100
-        versionName "1.0.0"
+        versionCode 101
+        versionName "1.0.1"
         consumerProguardFiles 'proguard-rules.pro'
     }
 
@@ -25,7 +25,7 @@ android {
 ext {
     rxAndroidVersion = '2.0.1'
     rxJavaVersion = '2.0.1'
-    sqlbriteVersion = '2.0.0-SNAPSHOT'
+    sqlbriteVersion = '2.0.0'
     yamlVersion = 'v1.18-android'
     junitVersion = '4.12'
     mockitoVersion = '1.9.5'
